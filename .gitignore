@@ -1,0 +1,6 @@
+pdfs/
+pdfs-OCR/
+NER_entity_rulers/
+spacy-training/
+.env/
+'archive/
