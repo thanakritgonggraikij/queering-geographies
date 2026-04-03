@@ -4,6 +4,8 @@
 import json
 import pathlib as path
 
+#! ######################################### STEP 2 ##############################################
+
 
 # Load Json file to read
 input_f = path.Path("C:\\Users\\13065\\Documents\\GitHub\\queering-geographies\\fugue_2011-2016-2021_for_LS_FULL.json") #! CHANGE DIRECTORY!!!!

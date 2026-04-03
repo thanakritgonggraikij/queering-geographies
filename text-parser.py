@@ -1,4 +1,8 @@
+
+
 # following this page https://github.com/pymupdf/PyMuPDF
+#! ######################################### STEP 1 ##############################################
+
 
 import pymupdf as pypdf # type: ignore
 import spacy as spc # type: ignore
@@ -72,9 +76,6 @@ with open("fugue_2021_for-spacy.json", "w", encoding="utf-8") as f:
     json.dump(all_blocks, f, ensure_ascii=False, indent=2)
 
 print("oh yeah!")
-
-
-
 
 
 

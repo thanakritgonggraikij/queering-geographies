@@ -97,8 +97,6 @@ def get_gentrification_severity(income, change_dwl, change_edu):
         return 0 # Non-Gentrifiable
     
     
-    
-    
     if not (change_dwl > mtl_change_dwl and change_edu > mtl_change_edu):
         return 1 # Gentrifiable
     
