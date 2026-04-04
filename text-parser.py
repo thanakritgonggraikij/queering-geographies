@@ -33,7 +33,7 @@ print("Entity Ruler initialized")
 
 # Process PDFs
 all_blocks = []
-pdf_folder_sub = "pdfs-OCR\\2021" #! CHANGE DIRECTORY!!!!
+pdf_folder_sub = "pdfs-OCR\\2005" #! CHANGE DIRECTORY!!!!
 pdf_folder = path.Path(f"C:\\Users\\13065\\Documents\\GitHub\\queering-geographies\\{pdf_folder_sub}")
 for pdf_file in pdf_folder.glob("*.pdf"):
     print(f"Processing {pdf_file.name}...")
@@ -72,7 +72,7 @@ for pdf_file in pdf_folder.glob("*.pdf"):
             
             print(f"     > pg {page.number + 1}")
         
-with open("fugue_2021_for-spacy.json", "w", encoding="utf-8") as f:
+with open("fugue_2005_for-spacy.json", "w", encoding="utf-8") as f:
     json.dump(all_blocks, f, ensure_ascii=False, indent=2)
 
 print("oh yeah!")

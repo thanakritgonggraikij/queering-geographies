@@ -3,7 +3,7 @@ import re
 import pandas as pd
 
 #load JSON
-with open("fugue_2011_spacy-processed.json", "r", encoding="utf-8-sig") as f: #! CHANGE DIRECTORY!!!
+with open("fugue_2005_spacy-processed.json", "r", encoding="utf-8-sig") as f: #! CHANGE DIRECTORY!!!
     data = json.load(f)
     
 rows = []
@@ -62,6 +62,6 @@ for item in data:
         
 #Create DataFrame + Export as CSV
 df = pd.DataFrame(rows)
-df.to_csv("fugue_2011_spacy-processed.csv", index=False, encoding="utf-8-sig") #! CHANGE DIRECTORY!!!!
+df.to_csv("fugue_2005_spacy-processed.csv", index=False, encoding="utf-8-sig") #! CHANGE DIRECTORY!!!!
 
 print(f"CSV created with {len(df)} rows")
