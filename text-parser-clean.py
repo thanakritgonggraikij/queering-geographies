@@ -8,6 +8,7 @@ import pathlib as path
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
+# ONLY REQUIRED FOR CLEANING DATA BEFORE LABEL STUDIO TRAINING
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
 #! ######################################### YOU CAN SKIP THIS!!!!! ##############################################
@@ -33,7 +34,7 @@ with open(entity_ruler_file, "r", encoding="utf-8") as f:
 
 print(f"Loaded {len(entity_terms)} entity tokens from 'entity_ruler_sorted.txt'")
 
-# Address-like check: digit followed by comma/space then street token
+# Address-like keywords checks
 street_tokens = {"rue", "avenue", "boulevard", "boul", "av", "st", "montreal", "montréal", "parc"}
 
 output_f = []
@@ -44,11 +45,11 @@ for block in all_blocks:
 
     text_lower = text.lower()
 
-    # Filter 1: must contain at least one entity ruler token
+    # filter - must contain at least one entity ruler token
     if not any(term in text_lower for term in entity_terms):
         continue
 
-    # Filter 2: must contain at least one location keyword (from entity terms or street tokens)
+    # filter - must contain at least one location keyword (from entity terms or street tokens)
     has_location_keyword = any(tok in text_lower for tok in street_tokens)
     if not has_location_keyword:
         # Also check any entity term looks like a location keyword e.g. rue
@@ -57,17 +58,16 @@ for block in all_blocks:
     if not has_location_keyword:
         continue
 
-    # Filter 3: address-like pattern using digit then next token street keyword
+    # filter- address-like pattern using digit then next token street keyword
+    
     tokens = [t.strip(".,;:") for t in text_lower.replace("\n", " ").split() if t.strip(".,;:")]
     has_address_like = False
     for i in range(len(tokens) - 1):
         if tokens[i].isdigit() and tokens[i+1] in street_tokens:
             has_address_like = True
             break
-
     if not has_address_like:
         continue
-
     if not block.get("entities"):
         continue
 
@@ -82,7 +82,6 @@ print(f"Writing {len(output_f)} cleaned blocks")
 with open("fugue_2011-2016-2021_for_LS_CLEAN.json", "w", encoding="utf-8") as f:
     json.dump(output_f, f, ensure_ascii=False, indent=2)
     
-
 print("Cleaned!")
 
-# THEN start Label Studio
+# THEN start Label Studio!!!

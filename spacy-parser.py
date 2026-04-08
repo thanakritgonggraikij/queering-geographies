@@ -3,6 +3,7 @@
     # Export to JSON for geocoding
 
 #! ######################################### STEP 3 ##############################################
+# PRODUCE JSON WITH ENTITIES EXTRACTED BY SPACY, TO BE USED IN THE CSV CONVERSION STEP
 
 import spacy as spc # type: ignore
 import json
