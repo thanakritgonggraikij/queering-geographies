@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Gay(Queer) Commercial Activities in Montreal 1984 to 2025</title>
 
-    //ACCESS TOKEN
     <script>
         var esriConfig = {
             apiKey: "AAPTafZVDkX6_Z1tCNzB5lj8VKg..aclEKbU9vTZoFuwTW-ydH1KBfkUddg01SCSVoOEWt6__2IthEfsrdBCxeo7S9S7y5frVbvf57Jfl2s66qPXsveIwzLE-Kr61_cmJu_tH1sXtvIQfjs3Lx1klnn5zYea9nNcaGN4nQL24J4bEnOhLc02grhsTjch8JDTWLFEVUpIgOn6CR0IbDlc_VeBDiVd2yeA7QtXc5jw5osTc4lTbybvq7GwLb2_yw5i7KNHouWLpmymzBNNt9XDj3g1J7FY0mlmsX-Xa71yEYAAINu262gWydPpsSyy54UGRsHUeuL5jAT1_0FeWPM5G",
@@ -92,7 +91,7 @@
 
 <body class="calcite-mode-dark">
     <calcite-shell id="appShell">
-        <arcgis-map center="-73.6696807, 45.548185" zoom="6" resize-align="top-left">
+        <arcgis-map center="-73.6696807, 45.548185" zoom="10" resize-align="top-left">
             <div slot="top-left" id="titleDiv"> Gay(Queer) Commercial Activities in Montreal 1984 to 2025 </div> <!--! HELLO GRIS 45.548185,-73.6696807 -->
             <arcgis-home slot="top-left"></arcgis-home>
             <arcgis-fullscreen slot="top-right"></arcgis-fullscreen>
@@ -138,7 +137,7 @@
         // NEW GLOBAL VARIABLES
         const HOSTEDLAYERID = "91c12901c8b04f438905babf56aaf7e9"
         const BASEMAPID = "4f2e99ba65e34bb8af49733d9778fb8e"
-        const YEAR_FIELD = "year"; // FIELD NAME 
+        const YEAR_FIELD = "YEAR_NUM"; // FIELD NAME 
         //--------------------------------------------------------------------------
         //  
         //--------------------------------------------------------------------------
@@ -160,6 +159,7 @@
             },
             layers: [layer],
         });
+        
         viewElement.constraints = {
             snapToZoom: false,
             // minScale: 100000.819286,
