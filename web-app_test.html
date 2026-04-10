@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>TESTING</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+
+    <script>
+        var esriConfig = { apiKey: "AAPTajlnUTePdU7SwM6TRUviZpg..37pZ6syVPglZ3Y2tMmG-3BnH5QwN6DpP-c3yzpvRIEyTu_y7EGyibzb1zlyOtiPwNlTM9szEopaSWsPOjbrnOXOqHR01GCfyzsyDC-MrfVCrhmDvc_7cyQiSpWYLmpnkQQjftJ1231YYN_nS-WJzvWo_yjQGgDQtKYhae7-p_6vWP545te4JcD8jnM6xsPG_dTTBQKQV0XG5Dl4LH87BO2bidZYqpkDIv4kj0RpCmU8-f9ZCQbh-TL5LMreNCwd7-tS1E5b7-PmYEOh5jBpqAh5Uz2Es6hmYsGeVtVIbNdaGAT1_0FeWPM5G" };
+    </script>
+
+    <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+    <script type="module" src="https://js.arcgis.com/5.0/"></script>
+
+</head>
+
+
+
+<body>
+
+    <arcgis-map basemap="arcgis/topographic" center="-114.07797306954969, 51.04602542074171" zoom="10">
+        <arcgis-zoom slot="top-left"></arcgis-zoom>
+    </arcgis-map>
+
+    <script type="module">
+        const FeatureLayer = await $arcgis.import("@arcgis/core/layers/FeatureLayer.js");
+
+        const viewElement = document.querySelector("arcgis-map");
+        await viewElement.viewOnReady();
+
+
+
+        //DATA!!!! FEATURE LAYER
+        const myFunDataLayer = new FeatureLayer({
+            url: "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/L4_2026_-_Hospitals/FeatureServer", // I HAVE ACCESS TO THIS ONE AS ALLOTED BY THE API
+            // url: "https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/L4_2026_-_Alberta_Flood_Zones_Mapping/FeatureServer" // NO ACCESS
+        })
+
+        // ADD DATA TO MAP!!!
+        viewElement.map.add(myFunDataLayer, 0); // 0 is the z index basically
+
+
+    </script>
+
+</body>
+
+</html>
