@@ -18,6 +18,22 @@
     <!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
     <script type="module" src="https://js.arcgis.com/5.0/"></script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <style>
         html,
         body {
@@ -44,8 +60,8 @@
             bottom: 18px;
             left: 12px;
             right: 12px;
-            /* width: calc(100vw -24px); */
-            height: auto;
+            width: calc(100vw -24px);
+            height: 100px;
             border-radius: 16px;
 
             display: flex;
@@ -92,6 +108,7 @@
       */
         .tooltip {
             display: inline-flex;
+            max-width: 300px;
         }
 
         .tooltip>div {
@@ -100,36 +117,79 @@
             border-radius: 4px;
             box-shadow: 0 0 4px rgba(255, 255, 255, 0.75);
             background-color: var(--calcite-color-foreground-1);
+            white-space: pre-wrap;
         }
     </style>
 </head>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <body class="calcite-mode-dark">
     <calcite-shell id="appShell">
-        <arcgis-map center="-73.6696807, 45.548185" zoom="10" resize-align="top-left">
+        <arcgis-map center="-73.56041081255006, 45.51824480537227" zoom="14" resize-align="top-left">
             <div slot="top-left" id="titleDiv"> Gay(Queer) Commercial Activities Montréal (1984 - 2025)</div>
             <!--! HELLO GRIS 45.548185,-73.6696807 -->
             <arcgis-home slot="top-left"></arcgis-home>
             <arcgis-fullscreen slot="top-right"></arcgis-fullscreen>
-            <arcgis-expand slot="top-right" expand-icon="list-bullet">
+            <arcgis-expand slot="top-right" expand-icon="list-bullet" expanded>
                 <arcgis-legend legend-style="classic"></arcgis-legend>
             </arcgis-expand>
         </arcgis-map>
+
         <div id="footer" slot="footer">
+
             <calcite-block id="years-block" expanded label="current year">
                 <span id="sliderValue">1984</span>
             </calcite-block>
+
             <calcite-block id="slider-block" label="slider block" expanded>
                 <div id="sliderInnerContainer">
-                    <calcite-slider id="yearsSlider" value="1984" label-ticks ticks="5" max-label="2025" max="2025"
+                    <calcite-slider id="yearsSlider" value="1984" label-ticks ticks="10" max-label="2025" max="2025"
                         min-label="1984" min="1984"></calcite-slider>
                 </div>
             </calcite-block>
+
             <calcite-block label="play button block" id="play-block" expanded>
                 <calcite-button id="playButton" appearance="transparent" icon-start="play">Play</calcite-button>
             </calcite-block>
+
         </div>
     </calcite-shell>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <script type="module">
@@ -155,6 +215,7 @@
         const BASEMAPID = "4f2e99ba65e34bb8af49733d9778fb8e"
         const YEAR_FIELD = "YEAR_NUM"; // FIELD NAME 
         const POPUP_FIELD = "text";
+        const AUTO_PLAY = true; // set to false to disable autostart
         //--------------------------------------------------------------------------
         //  
         //--------------------------------------------------------------------------
@@ -165,6 +226,7 @@
             definitionExpression: `${YEAR_FIELD} > 0`,
             title: "Gay(Queer) Spaces",
             effect: "bloom(1 0 0.15)",
+            outFields: [POPUP_FIELD, YEAR_FIELD],
         });
 
         viewElement.map = new Map({
@@ -204,6 +266,9 @@
 
         // Starts the application by visualizing year 1984
         setYear(1984);
+        if (AUTO_PLAY) {
+            startAnimation();
+        }
 
         //--------------------------------------------------------------------------
         //  Methods
@@ -222,7 +287,7 @@
         function createRenderer(year) {
             return {
                 type: "simple",
-                symbol: { type: "simple-marker", color: "rgb(0, 0, 0)", size: 4, outline: null },
+                symbol: { type: "simple-marker", color: "rgb(0, 0, 0)", size: 6, outline: null },
                 visualVariables: [
                     {
                         type: "opacity",
@@ -239,9 +304,10 @@
                         field: YEAR_FIELD,
                         legendOptions: { title: "Activity" },
                         stops: [
-                            { value: year, color: "#0ff", label: `Current Year: ${year}` },
-                            { value: year - 1, color: "#f0f", label: `In ${year - 5}` }, // CHANGE THE INTERVAL TO MAYBE 5 - 10 YEAR
-                            { value: year - 10, color: "rgba(68, 0, 68, 0.25)", label: `Before ${year - 10}` },
+                            { value: year, color: "rgba(0, 255, 255, 1)", label: `Current Year: ${year}` },
+                            { value: year - 1, color: "rgba(0, 255, 255, 0.85)", label: `1 Year Ago - ${year - 5}` },
+                            { value: year - 5, color: "rgba(68, 0, 68, 1)", label: `5 Years Ago - ${year - 10}` },
+                            { value: year - 10, color: "rgba(0, 0, 0, 0.25)", label: `10 Years and Older -  ${year - 15}` }
                         ],
                     },
                 ],
@@ -281,7 +347,7 @@
 
             const update = () => {
                 if (!animating) return;
-                value += 0.25; //ANIMATION SPEED HERE
+                value += 0.15; //ANIMATION SPEED HERE
                 if (value > 2025) value = 1984;
                 setYear(value);
                 requestAnimationFrame(update);
@@ -319,7 +385,7 @@
                     }
                     if (hit) {
                         highlight = layerView.highlight(hit.graphic);
-                        tooltip.show(hit.screenPoint, `Helo`); // FIELD NAME FIELD NAME
+                        tooltip.show(hit.screenPoint, `NER SOURCE:\n${hit.graphic.attributes[POPUP_FIELD]}\n\nYEAR: ${hit.graphic.attributes[YEAR_FIELD]}`);
                     } else {
                         tooltip.hide();
                     }
@@ -369,6 +435,7 @@
                     [targetX, targetY] = [pt.x, pt.y];
                     tooltip.style.opacity = 1;
                     text.textContent = str;
+                    
                     visible = true;
                     move();
                 },
