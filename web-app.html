@@ -1,0 +1,45 @@
+<!-- https://developers.arcgis.com/javascript/latest/get-started/ -->
+
+<!-- Load the ArcGIS Maps SDK for JavaScript from CDN -->
+<script type="module" src="https://js.arcgis.com/5.0/"></script>
+
+<script>
+    alert("Hello, ArcGIS Maps SDK for JavaScript!");
+</script>
+
+
+<script type="module">
+  const Graphic = await $arcgis.import("@arcgis/core/Graphic.js");
+  const viewElement = document.querySelector("arcgis-map");
+  // Wait for the view to be ready before adding additional functionality
+  await viewElement.viewOnReady();
+
+  // ...
+
+  // Create a graphic and add the geometry and symbol to it
+  const pointGraphic = new Graphic({
+    geometry: point, // A point geometry
+    symbol: markerSymbol, // A symbol for drawing the point
+  });
+  viewElement.graphics.add(pointGraphic);
+
+</script>
+
+
+
+
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+</style>
+
+<!-- There is no need to programmatically set the basemap, extent or zoom -->
+<!-- All this information comes from the WebMap -->
+<arcgis-map item-id="02b37471d5d84cacbebcccd785460e94">
+  <arcgis-zoom slot="top-left"></arcgis-zoom>
+</arcgis-map>
+
+
