@@ -2,7 +2,7 @@ import json
 # import re
 import pandas as pd
 
-years = [2011, 2016, 2021] #! CHANGE YEAR!!!!
+years = ["webapp_full"] #! CHANGE YEAR!!!!
 
 for year in years:
     #load JSON

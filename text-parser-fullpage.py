@@ -43,6 +43,8 @@ for pdf_file in pdf_folder.glob("*.pdf"):
 
     for page in pdf_doc: #(x0, y0, x1, y1, text, block_no, block_type)
         blocks = page.get_text("blocks", flags=pypdf.TEXT_PRESERVE_LIGATURES | pypdf.TEXT_PRESERVE_IMAGES)
+        page_text_lines = []
+        
         for block in blocks:
             if block[0] > 10000: #skip random outliers
                 continue
@@ -58,19 +60,18 @@ for pdf_file in pdf_folder.glob("*.pdf"):
             else:
                 text_line = text_line.replace("\n", " ")
             
-            all_blocks.append({
-                "source": pdf_file.name,
-                "page": page.number + 1, #human number readable
-                "bbox": [round(block[0], -1), round(block[1], -1), round(block[2], -1), round(block[3], -1)], #maybe get rid of this
-                "block_no": block[5],
-                "block_type": block[6],
-                "text": text_line,
-                # "entities": [] if block[6] == 1 else [
-                #     {"text": ent.text, "label": ent.label_} for ent in nlp(text_line).ents if ent.label_ in ["LOC", "GPE", "ORG"]
-                #     ]
-            })
-            
-            print(f"     > pg {page.number + 1}")
+            page_text_lines.append(text_line)
+        
+        # Combine all blocks on this page into one text block
+        combined_text = " ".join([text for text in page_text_lines if text])  # Only join non-empty strings
+        
+        all_blocks.append({
+            "source": pdf_file.name,
+            "page": page.number + 1, #human number readable
+            "text": combined_text,
+        })
+        
+        print(f"     > pg {page.number + 1}")
         
 with open("fugue_webapp_for-spacy.json", "w", encoding="utf-8") as f:
     json.dump(all_blocks, f, ensure_ascii=False, indent=2)
