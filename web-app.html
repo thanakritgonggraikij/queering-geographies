@@ -9,9 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Gay(Queer) Commercial Activities Found in Fugues Magazine, Montréal (1984 - 2025)</title>
 
+    <script src="./web-app.config"></script>
     <script>
         var esriConfig = {
-            apiKey: "AAPTafZVDkX6_Z1tCNzB5lj8VKg..aclEKbU9vTZoFuwTW-ydH1KBfkUddg01SCSVoOEWt6__2IthEfsrdBCxeo7S9S7y5frVbvf57Jfl2s66qPXsveIwzLE-Kr61_cmJu_tH1sXtvIQfjs3Lx1klnn5zYea9nNcaGN4nQL24J4bEnOhLc02grhsTjch8JDTWLFEVUpIgOn6CR0IbDlc_VeBDiVd2yeA7QtXc5jw5osTc4lTbybvq7GwLb2_yw5i7KNHouWLpmymzBNNt9XDj3g1J7FY0mlmsX-Xa71yEYAAINu262gWydPpsSyy54UGRsHUeuL5jAT1_0FeWPM5G",
+            apiKey: (window.webAppConfig && window.webAppConfig.arcgis && window.webAppConfig.arcgis.apiKey)
+                || "PASTE_YOUR_ARCGIS_API_KEY_HERE",
         };
     </script>
 
@@ -129,20 +131,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <body class="calcite-mode-dark">
     <calcite-shell id="appShell">
         <arcgis-map center="-73.56041081255006, 45.51824480537227" zoom="14" resize-align="top-left">
@@ -211,11 +199,23 @@
         //  
         //--------------------------------------------------------------------------
         // NEW GLOBAL VARIABLES
-        const HOSTEDLAYERID = "91c12901c8b04f438905babf56aaf7e9"
-        const BASEMAPID = "4f2e99ba65e34bb8af49733d9778fb8e"
-        const YEAR_FIELD = "YEAR_NUM"; // FIELD NAME 
-        const POPUP_FIELD = "text";
-        const AUTO_PLAY = true; // set to false to disable autostart
+        const config = window.webAppConfig || {};
+        const arcgisConfig = config.arcgis || {};
+        const layerConfig = config.layer || {};
+        const mapConfig = config.map || {};
+
+        const HOSTEDLAYERID = layerConfig.portalItemId || "91c12901c8b04f438905babf56aaf7e9";
+        const BASEMAPID = arcgisConfig.basemapId || "";
+        const YEAR_FIELD = layerConfig.yearField || "YEAR_NUM";
+        const POPUP_FIELD = layerConfig.popupField || "text";
+        const AUTO_PLAY = layerConfig.autoPlay !== undefined ? layerConfig.autoPlay : true;
+        const MIN_YEAR = layerConfig.minYear || 1984;
+        const MAX_YEAR = layerConfig.maxYear || 2025;
+
+        slider.min = MIN_YEAR;
+        slider.max = MAX_YEAR;
+        slider.value = MIN_YEAR;
+        sliderValue.textContent = MIN_YEAR;
         //--------------------------------------------------------------------------
         //  
         //--------------------------------------------------------------------------
@@ -224,21 +224,26 @@
         const layer = new FeatureLayer({
             portalItem: { id: HOSTEDLAYERID },
             definitionExpression: `${YEAR_FIELD} > 0`,
-            title: "Gay(Queer) Spaces",
+            title: layerConfig.title || "Gay(Queer) Spaces",
             effect: "bloom(1 0 0.15)",
             outFields: [POPUP_FIELD, YEAR_FIELD],
         });
 
         viewElement.map = new Map({
-            basemap: "dark-gray-vector",
-
-            // basemap: {
-            //     portalItem: {
-            //         id: BASEMAPID,  //CUSTOM BASEMAP
-            //     },
-            // },
+            basemap: BASEMAPID ? {
+                portalItem: {
+                    id: BASEMAPID,
+                },
+            } : "dark-gray-vector",
             layers: [layer],
         });
+
+        if (mapConfig.center) {
+            viewElement.center = mapConfig.center;
+        }
+        if (mapConfig.zoom) {
+            viewElement.zoom = mapConfig.zoom;
+        }
 
         viewElement.constraints = {
             snapToZoom: false,
@@ -264,8 +269,8 @@
         // When the layerview is available, setup hovering interactivity
         viewElement.whenLayerView(layer).then(setupHoverTooltip);
 
-        // Starts the application by visualizing year 1984
-        setYear(1984);
+        // Starts the application by visualizing the configured minimum year
+        setYear(MIN_YEAR);
         if (AUTO_PLAY) {
             startAnimation();
         }
@@ -348,7 +353,7 @@
             const update = () => {
                 if (!animating) return;
                 value += 0.15; //ANIMATION SPEED HERE
-                if (value > 2025) value = 1984;
+                if (value > MAX_YEAR) value = MIN_YEAR;
                 setYear(value);
                 requestAnimationFrame(update);
             };
