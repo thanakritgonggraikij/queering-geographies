@@ -132,6 +132,8 @@
 
 
 <body class="calcite-mode-dark">
+
+    
     <calcite-shell id="appShell">
         <arcgis-map center="-73.56041081255006, 45.51824480537227" zoom="14" resize-align="top-left">
             <div slot="top-left" id="titleDiv"> Gay(Queer) Commercial Activities Montréal (1984 - 2025)</div>
@@ -181,7 +183,6 @@
 
 
     <script type="module">
-        // Consolidate imports up front and freeze constants
         const [Map, FeatureLayer, promiseUtils] = await $arcgis.import([
             "@arcgis/core/Map.js",
             "@arcgis/core/layers/FeatureLayer.js",
