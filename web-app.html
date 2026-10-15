@@ -49,39 +49,42 @@
             font-style: normal;
             font-size: 1.25rem;
             line-height: 98%;
-            padding: 12px;
+            padding: 1rem;
             background: var(--calcite-color-foreground-1);
-            border-radius: 8px;
+            border-radius: 0.8rem;
             height: fit-content;
             /* max-width: 25rem; */
-            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         }
 
         #footer {
             position: fixed;
-            bottom: 18px;
+            bottom: 1.25rem;
             left: 12px;
             right: 12px;
             width: calc(100vw -24px);
             height: 100px;
-            border-radius: 16px;
+            border-radius: 0.8rem;
+            scale: 0.95;
 
             display: flex;
             flex-direction: row;
             --calcite-color-brand: #9e9e9e;
             --calcite-color-brand-hover: #ededed;
-            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
         }
 
         #years-block,
         #play-block {
-            flex: 1;
-            flex-grow: 1;
+            flex: 0 0 10rem;
         }
 
         #slider-block {
-            flex: 5;
-            flex-grow: 10;
+            flex: 1;
+            min-width: 0;
+        }
+
+        #footer calcite-block {
+            border-radius: 0.8rem;
+            overflow: hidden;
         }
 
         #sliderValue {
@@ -93,10 +96,35 @@
         }
 
         #sliderInnerContainer {
+            box-sizing: border-box;
             justify-content: center;
             padding: 0 20px;
             margin-top: 20px;
             width: 100%;
+        }
+
+        #desktop-slider-labels {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            color: var(--calcite-color-text-1);
+            font-size: 0.875rem;
+            line-height: 1.25;
+        }
+
+        #desktop-slider-labels[hidden] {
+            display: none;
+        }
+
+        #desktop-slider-labels span {
+            text-align: center;
+        }
+
+        #desktop-slider-labels span:first-child {
+            text-align: left;
+        }
+
+        #desktop-slider-labels span:last-child {
+            text-align: right;
         }
 
         #playButton {
@@ -111,15 +139,97 @@
         .tooltip {
             display: inline-flex;
             max-width: 300px;
+            border-radius: 0.8rem;
+
         }
 
         .tooltip>div {
             margin: 0 auto;
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 0.8rem;
             box-shadow: 0 0 4px rgba(255, 255, 255, 0.75);
             background-color: var(--calcite-color-foreground-1);
             white-space: pre-wrap;
+        }
+
+        @media (max-width: 579.98px) {
+            #desktop-slider-labels {
+                display: none;
+            }
+
+            #appShell {
+                height: 100vh;
+                height: 100dvh;
+            }
+
+            arcgis-map {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
+            #titleDiv {
+                max-width: min(75vw, 75vw);
+                padding: 8px 10px;
+                font-size: 1.25rem;
+                line-height: 1.1;
+            }
+
+            #footer {
+                left: 8px;
+                right: 8px;
+                bottom: calc(8px + env(safe-area-inset-bottom));
+                width: auto;
+                height: auto;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                grid-template-areas:
+                    "year play"
+                    "slider slider";
+                gap: 8px;
+                z-index: 10;
+            }
+
+            #years-block {
+                grid-area: year;
+                min-width: 0;
+                margin-block: 0 !important;
+            }
+
+            #slider-block {
+                grid-area: slider;
+                min-width: 0;
+                margin-block: 0 !important;
+            }
+
+            #play-block {
+                grid-area: play;
+                min-width: 126px;
+                margin-block: 0 !important;
+                position: relative;
+            }
+
+            #sliderValue {
+                font-size: clamp(1.5rem, 8vw, 2rem);
+            }
+
+            #sliderInnerContainer {
+                box-sizing: border-box;
+                width: 100%;
+                margin-top: 0;
+                padding: 0 12px 8px;
+            }
+
+            #playButton {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: auto;
+                min-height: 44px;
+                margin-top: 0;
+                padding: 0 8px;
+            }
         }
     </style>
 </head>
@@ -153,8 +263,9 @@
 
             <calcite-block id="slider-block" label="slider block" expanded>
                 <div id="sliderInnerContainer">
-                    <calcite-slider id="yearsSlider" value="1984" label-ticks ticks="10" max-label="2025" max="2025"
+                    <calcite-slider id="yearsSlider" value="1984" ticks="10" max-label="2025" max="2025"
                         min-label="1984" min="1984"></calcite-slider>
+                    <div id="desktop-slider-labels" aria-hidden="true" hidden></div>
                 </div>
             </calcite-block>
 
@@ -192,9 +303,21 @@
         const sliderValue = document.getElementById("sliderValue");
         const playButton = document.getElementById("playButton");
         const slider = document.getElementById("yearsSlider");
+        const desktopSliderLabels = document.getElementById("desktop-slider-labels");
         const viewElement = document.querySelector("arcgis-map");
+        const legendExpandElement = document.querySelector("arcgis-expand");
+        const mobileLayout = window.matchMedia("(max-width: 579.98px)");
 
         let animation = null;
+
+        const updateLegendExpansion = () => {
+            legendExpandElement.expanded = !mobileLayout.matches;
+            slider.labelTicks = mobileLayout.matches;
+            slider.ticks = mobileLayout.matches ? 21 : 10;
+            desktopSliderLabels.hidden = mobileLayout.matches;
+        };
+        updateLegendExpansion();
+        mobileLayout.addEventListener("change", updateLegendExpansion);
 
         //--------------------------------------------------------------------------
         //  
@@ -217,6 +340,18 @@
         slider.max = MAX_YEAR;
         slider.value = MIN_YEAR;
         sliderValue.textContent = MIN_YEAR;
+        const desktopYears = [MIN_YEAR];
+        for (let year = MIN_YEAR + 10; year <= MAX_YEAR - 10; year += 10) {
+            desktopYears.push(year);
+        }
+        if (desktopYears[desktopYears.length - 1] !== MAX_YEAR) {
+            desktopYears.push(MAX_YEAR);
+        }
+        desktopYears.forEach((year) => {
+            const label = document.createElement("span");
+            label.textContent = year;
+            desktopSliderLabels.appendChild(label);
+        });
         //--------------------------------------------------------------------------
         //  
         //--------------------------------------------------------------------------
